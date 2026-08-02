@@ -1,3 +1,2 @@
-# devops-shop-frontend
-
+# devops-shop
 Frontend for the Shop application
