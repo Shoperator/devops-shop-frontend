@@ -12,13 +12,4 @@ export const ENDPOINTS = {
     register: `${API_PREFIX}/auth/register`,
     me: `${API_PREFIX}/auth/me`,
   },
-  articles: {
-    all: `${API_PREFIX}/articles`,
-    byId: (id: string) => `${API_PREFIX}/articles/${id}`,
-  },
-  orders: {
-    all: `${API_PREFIX}/orders`,
-    mine: `${API_PREFIX}/orders/me`,
-    byId: (id: string) => `${API_PREFIX}/orders/${id}`,
-  },
 } as const;

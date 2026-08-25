@@ -26,8 +26,3 @@ export interface AuthResponseDto {
   tokenType: string;
   user: UserDto;
 }
-
-export interface UpdateUserDto {
-  displayName?: string;
-  walletAddress?: string;
-}
