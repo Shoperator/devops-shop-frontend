@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import RequireAuth from "@/components/RequireAuth";
 import { formatAmount, formatDate, statusChipClass } from "@/lib/format";
 import type { OrderDto } from "@/services/dto/order.dto";
 
-export default function OrdersPage() {
+function OrderList() {
   // Filled from orderService.getMyOrders() once the endpoint lands.
   const [orders] = useState<OrderDto[]>([]);
 
@@ -60,5 +61,13 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <RequireAuth>
+      <OrderList />
+    </RequireAuth>
   );
 }

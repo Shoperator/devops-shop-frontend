@@ -1,23 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SHOP_NAME } from "@/config/shop";
 import { useAuth } from "@/context/AuthContext";
 
-const PAGES = [
+const SIGNED_IN_PAGES = [
   { href: "/", label: "Home" },
   { href: "/orders", label: "My orders" },
   { href: "/account", label: "Account" },
 ];
 
+const SIGNED_OUT_PAGES = [
+  { href: "/", label: "Home" },
+  { href: "/login", label: "Sign in" },
+  { href: "/register", label: "Create account" },
+];
+
 function initials(displayName: string): string {
   const [first = "", second = ""] = displayName.trim().split(/\s+/);
-  return (first.charAt(0) + second.charAt(0)) || "?";
+  return first.charAt(0) + second.charAt(0) || "?";
 }
 
 export default function NavBar() {
   const { user, isAuthenticated, signOut } = useAuth();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -38,6 +46,13 @@ export default function NavBar() {
   }, [isMenuOpen]);
 
   const displayName = user?.displayName ?? "Guest";
+  const pages = isAuthenticated ? SIGNED_IN_PAGES : SIGNED_OUT_PAGES;
+
+  function handleSignOut() {
+    signOut();
+    setIsMenuOpen(false);
+    router.push("/");
+  }
 
   return (
     <nav className="navbar">
@@ -61,6 +76,9 @@ export default function NavBar() {
               {initials(displayName)}
             </span>
             <span>{displayName}</span>
+            {user?.role === "ADMIN" && (
+              <span className="chip chip-success">Admin</span>
+            )}
             <span className="navbar-caret" aria-hidden="true">
               ▾
             </span>
@@ -69,7 +87,7 @@ export default function NavBar() {
           {isMenuOpen && (
             <div className="navbar-menu" role="menu">
               <p className="navbar-menu-label">Pages</p>
-              {PAGES.map((page) => (
+              {pages.map((page) => (
                 <Link
                   key={page.href}
                   href={page.href}
@@ -88,10 +106,7 @@ export default function NavBar() {
                     type="button"
                     role="menuitem"
                     className="navbar-menu-item navbar-menu-danger"
-                    onClick={() => {
-                      signOut();
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleSignOut}
                   >
                     Sign out
                   </button>

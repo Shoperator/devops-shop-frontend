@@ -482,6 +482,111 @@ body {
   overflow-wrap: anywhere;
 }
 
+/* ====== Forms ====== */
+.form-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.form-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.form-lead {
+  margin: 0.4rem 0 1.75rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.14);
+}
+
+.form-input::placeholder {
+  color: #9aa79a;
+}
+
+.form-hint {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.form-error {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(198, 40, 40, 0.35);
+  border-radius: 8px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 0.88rem;
+}
+
+.form-submit {
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.form-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.form-footer a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}
+
 /* ====== Empty state ====== */
 .empty-state {
   padding: 3rem 1.5rem;

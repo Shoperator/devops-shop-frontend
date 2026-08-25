@@ -21,7 +21,4 @@ export const ENDPOINTS = {
     mine: `${API_PREFIX}/orders/me`,
     byId: (id: string) => `${API_PREFIX}/orders/${id}`,
   },
-  users: {
-    me: `${API_PREFIX}/users/me`,
-  },
 } as const;

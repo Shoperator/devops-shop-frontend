@@ -1,26 +1,30 @@
+import { apiRequest } from "./api";
+import { ENDPOINTS } from "./apiConstants";
 import type {
   AuthResponseDto,
   LoginRequestDto,
   RegisterRequestDto,
   UserDto,
 } from "./dto/user.dto";
-import { notImplemented } from "./notImplemented";
 
-/**
- * Authentication against the shop backend. The HTTP calls are added together
- * with the login screen in a follow-up commit; for now this file only pins down
- * the surface the UI will talk to.
- */
+/** Authentication against the shop backend. */
 export const authService = {
   login(credentials: LoginRequestDto): Promise<AuthResponseDto> {
-    return notImplemented("authService.login", credentials.username);
+    return apiRequest<AuthResponseDto>(ENDPOINTS.auth.login, {
+      method: "POST",
+      body: credentials,
+    });
   },
 
+  /** Self-registration always creates a customer account. */
   register(registration: RegisterRequestDto): Promise<UserDto> {
-    return notImplemented("authService.register", registration.username);
+    return apiRequest<UserDto>(ENDPOINTS.auth.register, {
+      method: "POST",
+      body: registration,
+    });
   },
 
   me(): Promise<UserDto> {
-    return notImplemented("authService.me");
+    return apiRequest<UserDto>(ENDPOINTS.auth.me, { authenticated: true });
   },
 };

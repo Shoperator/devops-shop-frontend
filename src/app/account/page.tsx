@@ -1,11 +1,21 @@
 "use client";
 
+import RequireAuth from "@/components/RequireAuth";
 import { useAuth } from "@/context/AuthContext";
 
 const PLACEHOLDER = "—";
 
-export default function AccountPage() {
-  const { user, isLoading } = useAuth();
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "Shop admin",
+  CUSTOMER: "Customer",
+};
+
+function AccountDetails() {
+  const { user } = useAuth();
+
+  if (user === null) {
+    return null;
+  }
 
   return (
     <div className="page">
@@ -16,47 +26,39 @@ export default function AccountPage() {
         </p>
       </header>
 
-      {isLoading ? (
-        <div className="card">
-          <div className="empty-state">
-            <p className="empty-state-text">Loading your account…</p>
-          </div>
+      <div className="card">
+        <h2 className="section-title">Profile</h2>
+        <div className="detail-row">
+          <span className="detail-label">Display name</span>
+          <span className="detail-value">{user.displayName}</span>
         </div>
-      ) : user === null ? (
-        <div className="card">
-          <div className="empty-state">
-            <p className="empty-state-title">You are not signed in</p>
-            <p className="empty-state-text">
-              Sign in to see your profile, your wallet address and the orders
-              tied to this account.
-            </p>
-          </div>
+        <div className="detail-row">
+          <span className="detail-label">Username</span>
+          <span className="detail-value">{user.username}</span>
         </div>
-      ) : (
-        <div className="card">
-          <h2 className="section-title">Profile</h2>
-          <div className="detail-row">
-            <span className="detail-label">Display name</span>
-            <span className="detail-value">{user.displayName}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Username</span>
-            <span className="detail-value">{user.username}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Role</span>
-            <span className="detail-value">
-              <span className="chip chip-success">{user.role}</span>
+        <div className="detail-row">
+          <span className="detail-label">Role</span>
+          <span className="detail-value">
+            <span className="chip chip-success">
+              {ROLE_LABELS[user.role] ?? user.role}
             </span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Wallet address</span>
-            <span className="detail-value font-mono text-sm">
-              {user.walletAddress ?? PLACEHOLDER}
-            </span>
-          </div>
+          </span>
         </div>
-      )}
+        <div className="detail-row">
+          <span className="detail-label">Wallet address</span>
+          <span className="detail-value font-mono text-sm">
+            {user.walletAddress ?? PLACEHOLDER}
+          </span>
+        </div>
+      </div>
     </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <RequireAuth>
+      <AccountDetails />
+    </RequireAuth>
   );
 }
