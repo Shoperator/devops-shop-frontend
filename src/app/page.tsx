@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SHOP_NAME, SHOP_TAGLINE } from "@/config/shop";
+import { getShopName, getShopTagline } from "@/config/shop";
 
 const FEATURES = [
   {
@@ -25,8 +25,8 @@ export default function HomePage() {
       <section className="hero">
         <div className="hero-container">
           <span className="hero-eyebrow">Powered by ShopHub</span>
-          <h1 className="hero-title">{SHOP_NAME}</h1>
-          <p className="hero-subtitle">{SHOP_TAGLINE}</p>
+          <h1 className="hero-title">{getShopName()}</h1>
+          <p className="hero-subtitle">{getShopTagline()}</p>
           <div className="hero-actions">
             <Link href="#catalogue" className="btn btn-filled">
               Browse articles

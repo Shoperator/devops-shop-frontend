@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { SHOP_NAME } from "@/config/shop";
+import { getShopName } from "@/config/shop";
 import { useAuth } from "@/context/AuthContext";
 
 const SIGNED_IN_PAGES = [
@@ -47,6 +47,7 @@ export default function NavBar() {
 
   const displayName = user?.displayName ?? "Guest";
   const pages = isAuthenticated ? SIGNED_IN_PAGES : SIGNED_OUT_PAGES;
+  const shopName = getShopName();
 
   function handleSignOut() {
     signOut();
@@ -59,9 +60,9 @@ export default function NavBar() {
       <div className="navbar-container">
         <Link href="/" className="navbar-brand">
           <span className="navbar-logo" aria-hidden="true">
-            {SHOP_NAME.charAt(0).toUpperCase()}
+            {shopName.charAt(0).toUpperCase()}
           </span>
-          <span>{SHOP_NAME}</span>
+          <span>{shopName}</span>
         </Link>
 
         <div className="navbar-user" ref={menuRef}>

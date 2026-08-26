@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SHOP_NAME } from "@/config/shop";
+import { getShopName } from "@/config/shop";
 import { useAuth } from "@/context/AuthContext";
 import { ApiError } from "@/services/api";
 import { authService } from "@/services/authService";
@@ -50,7 +50,7 @@ export default function RegisterPage() {
     <div className="form-page">
       <div className="card form-card">
         <h1 className="form-title">Create account</h1>
-        <p className="form-lead">Start shopping at {SHOP_NAME}.</p>
+        <p className="form-lead">Start shopping at {getShopName()}.</p>
 
         <form className="form-fields" onSubmit={handleSubmit} noValidate>
           {error !== null && (

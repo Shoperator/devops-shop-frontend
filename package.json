@@ -10,8 +10,16 @@
   },
   "dependencies": {
     "next": "16.2.12",
+    "next-runtime-env": "^3.3.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
+  },
+  "comment:overrides": "next-runtime-env@3 lists next@^14 / react@^18 as real dependencies, not just peers, so npm installs a nested Next 14 + React 18 beside ours. Pin both to this app's copies: otherwise the library resolves next/cache against a foreign Next instance and its unstable_noStore() no longer sees our request scope.",
+  "overrides": {
+    "next-runtime-env": {
+      "next": "$next",
+      "react": "$react"
+    }
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,5 +1,5 @@
 import { clearSession, getStoredToken } from "@/lib/authStorage";
-import { API_BASE_URL } from "./apiConstants";
+import { getApiBaseUrl } from "./apiConstants";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -54,7 +54,7 @@ export async function apiRequest<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${getApiBaseUrl()}${path}`, {
       method,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),
