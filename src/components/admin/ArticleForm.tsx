@@ -6,6 +6,7 @@ import { articleService } from "@/services/articleService";
 import type {
   ArticleDto,
   CreateArticleRequestDto,
+  UpdateArticleRequestDto,
 } from "@/services/dto/article.dto";
 
 /** The form keeps raw strings; number inputs hand back text either way. */
@@ -35,6 +36,31 @@ function toFormValues(article: ArticleDto | null): FormValues {
 function blankToNull(value: string): string | null {
   const trimmed = value.trim();
   return trimmed === "" ? null : trimmed;
+}
+
+/**
+ * Only the fields whose value really differs from the article as it was loaded.
+ */
+function changedFields(
+  article: ArticleDto,
+  next: CreateArticleRequestDto,
+): UpdateArticleRequestDto {
+  const changes: UpdateArticleRequestDto = {};
+
+  if (next.name !== article.name) {
+    changes.name = next.name;
+  }
+  if ((next.description ?? null) !== article.description) {
+    changes.description = next.description;
+  }
+  if (next.price !== article.price) {
+    changes.price = next.price;
+  }
+  if (next.quantity !== article.quantity) {
+    changes.quantity = next.quantity;
+  }
+
+  return changes;
 }
 
 function validate(values: FormValues): FieldErrors {
@@ -110,7 +136,10 @@ export default function ArticleForm({
       if (article === null) {
         await articleService.create(payload);
       } else {
-        await articleService.update(article.id, payload);
+        const changes = changedFields(article, payload);
+        if (Object.keys(changes).length > 0) {
+          await articleService.update(article.id, changes);
+        }
       }
       onSaved();
     } catch (caught) {

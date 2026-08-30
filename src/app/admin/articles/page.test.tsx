@@ -230,9 +230,131 @@ describe("AdminArticlesPage", () => {
       await waitFor(() =>
         expect(articleServiceMock.update).toHaveBeenCalledWith(
           "a0000000-0000-4000-8000-000000000001",
-          expect.objectContaining({ quantity: 40, name: "Green tea" }),
+          { quantity: 40 },
         ),
       );
+    });
+
+    describe("sends only the fields that changed", () => {
+      /** Opens the edit dialog on the one article the page lists. */
+      async function openEditor(user: ReturnType<typeof userEvent.setup>) {
+        await renderAdminPage();
+        await user.click(await screen.findByRole("button", { name: "Edit" }));
+      }
+
+      it("renaming an article does not touch its stock", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        await user.clear(screen.getByLabelText("Name"));
+        await user.type(screen.getByLabelText("Name"), "Sencha");
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        // Carrying the stock along would undo any purchase made while the
+        // dialog was open.
+        await waitFor(() =>
+          expect(articleServiceMock.update).toHaveBeenCalledWith(
+            "a0000000-0000-4000-8000-000000000001",
+            { name: "Sencha" },
+          ),
+        );
+      });
+
+      it("repricing an article does not touch its stock", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        await user.clear(screen.getByLabelText("Price (USDT)"));
+        await user.type(screen.getByLabelText("Price (USDT)"), "19.99");
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        await waitFor(() =>
+          expect(articleServiceMock.update).toHaveBeenCalledWith(
+            "a0000000-0000-4000-8000-000000000001",
+            { price: 19.99 },
+          ),
+        );
+      });
+
+      it("clearing the description sends only that", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        await user.clear(screen.getByLabelText("Description"));
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        await waitFor(() =>
+          expect(articleServiceMock.update).toHaveBeenCalledWith(
+            "a0000000-0000-4000-8000-000000000001",
+            { description: null },
+          ),
+        );
+      });
+
+      it("sends several fields when several were edited", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        await user.clear(screen.getByLabelText("Name"));
+        await user.type(screen.getByLabelText("Name"), "Sencha");
+        await user.clear(screen.getByLabelText("Pieces in stock"));
+        await user.type(screen.getByLabelText("Pieces in stock"), "3");
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        await waitFor(() =>
+          expect(articleServiceMock.update).toHaveBeenCalledWith(
+            "a0000000-0000-4000-8000-000000000001",
+            { name: "Sencha", quantity: 3 },
+          ),
+        );
+      });
+
+      it("does not call the backend at all when nothing was edited", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        await waitFor(() =>
+          expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+        );
+        expect(articleServiceMock.update).not.toHaveBeenCalled();
+      });
+
+      it("treats a retyped price of the same value as no change", async () => {
+        const user = userEvent.setup();
+        await openEditor(user);
+
+        // The article costs 12.5; "12.50" is the same money.
+        await user.clear(screen.getByLabelText("Price (USDT)"));
+        await user.type(screen.getByLabelText("Price (USDT)"), "12.50");
+        await user.click(screen.getByRole("button", { name: "Save" }));
+
+        await waitFor(() =>
+          expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+        );
+        expect(articleServiceMock.update).not.toHaveBeenCalled();
+      });
+
+      it("still sends everything when creating an article", async () => {
+        const user = userEvent.setup();
+        await renderAdminPage();
+
+        await user.click(screen.getByRole("button", { name: "New article" }));
+        await user.type(screen.getByLabelText("Name"), "Rooibos");
+        await user.type(screen.getByLabelText("Price (USDT)"), "9.99");
+        await user.type(screen.getByLabelText("Pieces in stock"), "12");
+        await user.click(screen.getByRole("button", { name: "Add article" }));
+
+        await waitFor(() =>
+          expect(articleServiceMock.create).toHaveBeenCalledWith({
+            name: "Rooibos",
+            description: null,
+            price: 9.99,
+            quantity: 12,
+          }),
+        );
+      });
     });
   });
 
