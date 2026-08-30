@@ -5,6 +5,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { getShopName, getShopTagline } from "@/config/shop";
 import { AuthProvider } from "@/context/AuthContext";
+import { BasketProvider } from "@/context/BasketContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,8 +45,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <NavBar />
-          <main className="flex-1">{children}</main>
+          <BasketProvider>
+            <NavBar />
+            <main className="flex-1">{children}</main>
+          </BasketProvider>
         </AuthProvider>
       </body>
     </html>

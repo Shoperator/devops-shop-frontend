@@ -5,10 +5,18 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getShopName } from "@/config/shop";
 import { useAuth } from "@/context/AuthContext";
+import { useBasket } from "@/context/BasketContext";
 
-const SIGNED_IN_PAGES = [
+const CUSTOMER_PAGES = [
   { href: "/", label: "Home" },
+  { href: "/basket", label: "Basket" },
   { href: "/orders", label: "My orders" },
+  { href: "/account", label: "Account" },
+];
+
+/** The admin does not buy from their own shop, so no basket and no orders. */
+const ADMIN_ACCOUNT_PAGES = [
+  { href: "/", label: "Home" },
   { href: "/account", label: "Account" },
 ];
 
@@ -31,6 +39,7 @@ function initials(displayName: string): string {
 
 export default function NavBar() {
   const { user, isAuthenticated, signOut } = useAuth();
+  const { count: basketCount } = useBasket();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -52,8 +61,13 @@ export default function NavBar() {
   }, [isMenuOpen]);
 
   const displayName = user?.displayName ?? "Guest";
-  const pages = isAuthenticated ? SIGNED_IN_PAGES : SIGNED_OUT_PAGES;
   const isAdmin = user?.role === "ADMIN";
+  const isCustomer = user?.role === "CUSTOMER";
+  const pages = !isAuthenticated
+    ? SIGNED_OUT_PAGES
+    : isAdmin
+      ? ADMIN_ACCOUNT_PAGES
+      : CUSTOMER_PAGES;
   const shopName = getShopName();
 
   function handleSignOut() {
@@ -72,72 +86,85 @@ export default function NavBar() {
           <span>{shopName}</span>
         </Link>
 
-        <div className="navbar-user" ref={menuRef}>
-          <button
-            type="button"
-            className="navbar-user-button"
-            onClick={() => setIsMenuOpen((open) => !open)}
-            aria-haspopup="menu"
-            aria-expanded={isMenuOpen}
-          >
-            <span className="navbar-avatar" aria-hidden="true">
-              {initials(displayName)}
-            </span>
-            <span>{displayName}</span>
-            {isAdmin && <span className="chip chip-success">Admin</span>}
-            <span className="navbar-caret" aria-hidden="true">
-              ▾
-            </span>
-          </button>
-
-          {isMenuOpen && (
-            <div className="navbar-menu" role="menu">
-              <p className="navbar-menu-label">Pages</p>
-              {pages.map((page) => (
-                <Link
-                  key={page.href}
-                  href={page.href}
-                  role="menuitem"
-                  className="navbar-menu-item"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {page.label}
-                </Link>
-              ))}
-
-              {isAdmin && (
-                <>
-                  <div className="navbar-menu-separator" />
-                  <p className="navbar-menu-label">Manage shop</p>
-                  {ADMIN_PAGES.map((page) => (
-                    <Link
-                      key={page.href}
-                      href={page.href}
-                      role="menuitem"
-                      className="navbar-menu-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {page.label}
-                    </Link>
-                  ))}
-                </>
+        <div className="navbar-actions">
+          {/* The basket only exists for customers; the admin manages the shop. */}
+          {isCustomer && (
+            <Link href="/basket" className="navbar-basket">
+              <span aria-hidden="true">🧺</span>
+              <span>Basket</span>
+              {basketCount > 0 && (
+                <span className="navbar-basket-count">{basketCount}</span>
               )}
-
-              {isAuthenticated && (
-                <>
-                  <div className="navbar-menu-separator" />
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="navbar-menu-item navbar-menu-danger"
-                    onClick={handleSignOut}
-                  >
-                    Sign out
-                  </button>
-                </>
-              )}
-            </div>
+            </Link>
           )}
+
+          <div className="navbar-user" ref={menuRef}>
+            <button
+              type="button"
+              className="navbar-user-button"
+              onClick={() => setIsMenuOpen((open) => !open)}
+              aria-haspopup="menu"
+              aria-expanded={isMenuOpen}
+            >
+              <span className="navbar-avatar" aria-hidden="true">
+                {initials(displayName)}
+              </span>
+              <span>{displayName}</span>
+              {isAdmin && <span className="chip chip-success">Admin</span>}
+              <span className="navbar-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+
+            {isMenuOpen && (
+              <div className="navbar-menu" role="menu">
+                <p className="navbar-menu-label">Pages</p>
+                {pages.map((page) => (
+                  <Link
+                    key={page.href}
+                    href={page.href}
+                    role="menuitem"
+                    className="navbar-menu-item"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {page.label}
+                  </Link>
+                ))}
+
+                {isAdmin && (
+                  <>
+                    <div className="navbar-menu-separator" />
+                    <p className="navbar-menu-label">Manage shop</p>
+                    {ADMIN_PAGES.map((page) => (
+                      <Link
+                        key={page.href}
+                        href={page.href}
+                        role="menuitem"
+                        className="navbar-menu-item"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {page.label}
+                      </Link>
+                    ))}
+                  </>
+                )}
+
+                {isAuthenticated && (
+                  <>
+                    <div className="navbar-menu-separator" />
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="navbar-menu-item navbar-menu-danger"
+                      onClick={handleSignOut}
+                    >
+                      Sign out
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </nav>

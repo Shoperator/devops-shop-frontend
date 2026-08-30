@@ -1,5 +1,6 @@
 import { render, type RenderResult } from "@testing-library/react";
 import { AuthProvider } from "@/context/AuthContext";
+import { BasketProvider } from "@/context/BasketContext";
 import { storeSession } from "@/lib/authStorage";
 import type { UserDto } from "@/services/dto/user.dto";
 
@@ -20,8 +21,8 @@ export const CUSTOMER_USER: UserDto = {
 };
 
 /**
- * Renders inside a real `AuthProvider` with the session already in storage,
- * which is exactly how a page finds it after a reload.
+ * Renders inside the providers the real layout wraps every page in, with the
+ * session already in storage — exactly how a page finds it after a reload.
  */
 export function renderAs(
   user: UserDto | null,
@@ -30,5 +31,9 @@ export function renderAs(
   if (user !== null) {
     storeSession(user, "test-access-token");
   }
-  return render(<AuthProvider>{ui}</AuthProvider>);
+  return render(
+    <AuthProvider>
+      <BasketProvider>{ui}</BasketProvider>
+    </AuthProvider>,
+  );
 }

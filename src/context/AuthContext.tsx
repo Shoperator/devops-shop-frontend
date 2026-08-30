@@ -14,6 +14,7 @@ import {
   storeSession,
   subscribeToSession,
 } from "@/lib/authStorage";
+import { clearBasket } from "@/lib/basketStorage";
 import type { UserDto } from "@/services/dto/user.dto";
 
 interface AuthContextValue {
@@ -50,6 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(() => {
     clearSession();
+    // Signing out can mean handing the browser to somebody else, so the basket
+    // goes with the session. An expired token does not clear it: the customer
+    // signs back in and their basket is still there.
+    clearBasket();
   }, []);
 
   const value = useMemo<AuthContextValue>(

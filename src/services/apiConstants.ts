@@ -27,7 +27,9 @@ export const ENDPOINTS = {
     byId: (id: string) => `${API_PREFIX}/articles/${encodeURIComponent(id)}`,
   },
   orders: {
+    /** Also the checkout endpoint: POST turns a basket into an order. */
     list: `${API_PREFIX}/orders`,
+    mine: `${API_PREFIX}/orders/mine`,
     byId: (id: string) => `${API_PREFIX}/orders/${encodeURIComponent(id)}`,
   },
 } as const;
