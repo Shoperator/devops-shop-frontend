@@ -93,9 +93,9 @@ describe("AdminArticlesPage", () => {
 
       renderAs(ADMIN_USER, <AdminArticlesPage />);
 
-      expect(
-        await screen.findByRole("alert"),
-      ).toHaveTextContent("Cannot reach the shop. Please try again.");
+      expect(await screen.findByRole("alert")).toHaveTextContent(
+        "Cannot reach the shop. Please try again.",
+      );
     });
   });
 
@@ -121,7 +121,9 @@ describe("AdminArticlesPage", () => {
         }),
       );
       // Once on mount, once after the article was stored.
-      await waitFor(() => expect(articleServiceMock.list).toHaveBeenCalledTimes(2));
+      await waitFor(() =>
+        expect(articleServiceMock.list).toHaveBeenCalledTimes(2),
+      );
     });
 
     it("sends null rather than an empty string for a description left blank", async () => {
@@ -155,6 +157,26 @@ describe("AdminArticlesPage", () => {
       ).toBeInTheDocument();
       expect(articleServiceMock.create).not.toHaveBeenCalled();
     });
+
+    it.each(["19.99", "0.29", "9.99", "0.01"])(
+      "accepts %s, an ordinary two-decimal price",
+      async (price) => {
+        const user = userEvent.setup();
+        await renderAdminPage();
+
+        await user.click(screen.getByRole("button", { name: "New article" }));
+        await user.type(screen.getByLabelText("Name"), "Rooibos");
+        await user.type(screen.getByLabelText("Price (USDT)"), price);
+        await user.type(screen.getByLabelText("Pieces in stock"), "1");
+        await user.click(screen.getByRole("button", { name: "Add article" }));
+
+        await waitFor(() =>
+          expect(articleServiceMock.create).toHaveBeenCalledWith(
+            expect.objectContaining({ price: Number(price) }),
+          ),
+        );
+      },
+    );
 
     it("refuses a price the price column could not store exactly", async () => {
       const user = userEvent.setup();
@@ -478,7 +500,9 @@ describe("AdminArticlesPage", () => {
       await renderAdminPage();
 
       expect(await screen.findByText("Green tea")).toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Next" }),
+      ).not.toBeInTheDocument();
     });
   });
 });

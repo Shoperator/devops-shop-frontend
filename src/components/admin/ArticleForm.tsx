@@ -63,6 +63,14 @@ function changedFields(
   return changes;
 }
 
+/**
+ * Whether a price fits the `numeric(18, 2)` column / has at most two decimals.
+ */
+function hasAtMostTwoDecimals(price: number): boolean {
+  const scaled = price * 100;
+  return Math.abs(scaled - Math.round(scaled)) < 1e-9;
+}
+
 function validate(values: FormValues): FieldErrors {
   const errors: FieldErrors = {};
 
@@ -75,7 +83,7 @@ function validate(values: FormValues): FieldErrors {
     errors.price = "A price is required";
   } else if (price < 0) {
     errors.price = "The price cannot be negative";
-  } else if (Math.round(price * 100) !== price * 100) {
+  } else if (!hasAtMostTwoDecimals(price)) {
     // The column is numeric(18, 2), so a third decimal would be lost.
     errors.price = "At most two decimal places";
   }
