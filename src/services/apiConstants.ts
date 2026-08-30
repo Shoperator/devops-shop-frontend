@@ -22,4 +22,34 @@ export const ENDPOINTS = {
     register: `${API_PREFIX}/auth/register`,
     me: `${API_PREFIX}/auth/me`,
   },
+  articles: {
+    list: `${API_PREFIX}/articles`,
+    byId: (id: string) => `${API_PREFIX}/articles/${encodeURIComponent(id)}`,
+  },
+  orders: {
+    list: `${API_PREFIX}/orders`,
+    byId: (id: string) => `${API_PREFIX}/orders/${encodeURIComponent(id)}`,
+  },
 } as const;
+
+/** Mirrors MAX_PAGE_SIZE on the backend; a larger `limit` is rejected there. */
+export const MAX_PAGE_SIZE = 100;
+
+/**
+ * Appends the query parameters that are actually set. Skipping the empty ones
+ * keeps the URL — and with it the Prometheus route label — stable.
+ */
+export function withQuery(
+  path: string,
+  params: Record<string, string | number | undefined>,
+): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") {
+      search.set(key, String(value));
+    }
+  }
+
+  const queryString = search.toString();
+  return queryString === "" ? path : `${path}?${queryString}`;
+}

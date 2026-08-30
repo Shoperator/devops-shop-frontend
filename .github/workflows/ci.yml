@@ -31,8 +31,8 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
-      - name: Tests
-        run: npm run test --if-present
+      - name: Unit tests
+        run: npm test
 
   docker-build-push:
     runs-on: ubuntu-latest

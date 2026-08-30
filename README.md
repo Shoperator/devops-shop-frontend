@@ -8,6 +8,42 @@ npm install
 npm run dev
 ```
 
+## Tests
+
+```bash
+npm test
+```
+
+Jest with Testing Library, driven through the pages the way an admin uses them.
+The service layer is stubbed, so a test asserts what the app asks the backend
+for, never how it is fetched. Runs on every pull request.
+
+Two things in the test setup are worth knowing about:
+
+- `next/navigation` is replaced by [`src/test-utils/nextNavigation.ts`](src/test-utils/nextNavigation.ts),
+  since the real hooks need an App Router context that only exists inside a
+  running Next server.
+- `next-runtime-env` is replaced by [`src/test-utils/nextRuntimeEnv.tsx`](src/test-utils/nextRuntimeEnv.tsx).
+  Its entry point re-exports a server component and pulls a large part of the
+  Next server runtime into the test; the stub reproduces what the library
+  actually does in a browser, which is one lookup in `window.__ENV`.
+
+## Pages
+
+| Path | Who | What |
+| --- | --- | --- |
+| `/` | everyone | Landing page |
+| `/login`, `/register` | signed out | Sign in and self-registration |
+| `/account` | signed in | Profile and wallet |
+| `/orders` | signed in | The customer's own orders |
+| `/admin/articles` | admin | Add, restock, reprice and remove articles |
+| `/admin/orders` | admin | Every order placed in this shop |
+
+The admin pages are wrapped in `<RequireAuth role="ADMIN">`, and the admin links
+only appear in the navbar for the shop owner. That is a UX guard, not a security
+boundary — the backend enforces the same rule on the token, and the pages call
+endpoints that reject anyone else.
+
 ## Configuration
 
 The shop identity and the backend address are injected per deployment, so the

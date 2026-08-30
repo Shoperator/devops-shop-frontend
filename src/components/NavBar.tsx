@@ -18,6 +18,12 @@ const SIGNED_OUT_PAGES = [
   { href: "/register", label: "Create account" },
 ];
 
+/** Only ever rendered for the shop admin; the backend enforces the same rule. */
+const ADMIN_PAGES = [
+  { href: "/admin/articles", label: "Articles" },
+  { href: "/admin/orders", label: "Orders" },
+];
+
 function initials(displayName: string): string {
   const [first = "", second = ""] = displayName.trim().split(/\s+/);
   return first.charAt(0) + second.charAt(0) || "?";
@@ -47,6 +53,7 @@ export default function NavBar() {
 
   const displayName = user?.displayName ?? "Guest";
   const pages = isAuthenticated ? SIGNED_IN_PAGES : SIGNED_OUT_PAGES;
+  const isAdmin = user?.role === "ADMIN";
   const shopName = getShopName();
 
   function handleSignOut() {
@@ -77,9 +84,7 @@ export default function NavBar() {
               {initials(displayName)}
             </span>
             <span>{displayName}</span>
-            {user?.role === "ADMIN" && (
-              <span className="chip chip-success">Admin</span>
-            )}
+            {isAdmin && <span className="chip chip-success">Admin</span>}
             <span className="navbar-caret" aria-hidden="true">
               ▾
             </span>
@@ -99,6 +104,24 @@ export default function NavBar() {
                   {page.label}
                 </Link>
               ))}
+
+              {isAdmin && (
+                <>
+                  <div className="navbar-menu-separator" />
+                  <p className="navbar-menu-label">Manage shop</p>
+                  {ADMIN_PAGES.map((page) => (
+                    <Link
+                      key={page.href}
+                      href={page.href}
+                      role="menuitem"
+                      className="navbar-menu-item"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {page.label}
+                    </Link>
+                  ))}
+                </>
+              )}
 
               {isAuthenticated && (
                 <>
