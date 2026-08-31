@@ -6,6 +6,7 @@ import { articleService } from "@/services/articleService";
 import type {
   ArticleDto,
   CreateArticleRequestDto,
+  UpdateArticleRequestDto,
 } from "@/services/dto/article.dto";
 
 /** The form keeps raw strings; number inputs hand back text either way. */
@@ -37,6 +38,39 @@ function blankToNull(value: string): string | null {
   return trimmed === "" ? null : trimmed;
 }
 
+/**
+ * Only the fields whose value really differs from the article as it was loaded.
+ */
+function changedFields(
+  article: ArticleDto,
+  next: CreateArticleRequestDto,
+): UpdateArticleRequestDto {
+  const changes: UpdateArticleRequestDto = {};
+
+  if (next.name !== article.name) {
+    changes.name = next.name;
+  }
+  if ((next.description ?? null) !== article.description) {
+    changes.description = next.description;
+  }
+  if (next.price !== article.price) {
+    changes.price = next.price;
+  }
+  if (next.quantity !== article.quantity) {
+    changes.quantity = next.quantity;
+  }
+
+  return changes;
+}
+
+/**
+ * Whether a price fits the `numeric(18, 2)` column / has at most two decimals.
+ */
+function hasAtMostTwoDecimals(price: number): boolean {
+  const scaled = price * 100;
+  return Math.abs(scaled - Math.round(scaled)) < 1e-9;
+}
+
 function validate(values: FormValues): FieldErrors {
   const errors: FieldErrors = {};
 
@@ -49,7 +83,7 @@ function validate(values: FormValues): FieldErrors {
     errors.price = "A price is required";
   } else if (price < 0) {
     errors.price = "The price cannot be negative";
-  } else if (Math.round(price * 100) !== price * 100) {
+  } else if (!hasAtMostTwoDecimals(price)) {
     // The column is numeric(18, 2), so a third decimal would be lost.
     errors.price = "At most two decimal places";
   }
@@ -110,7 +144,10 @@ export default function ArticleForm({
       if (article === null) {
         await articleService.create(payload);
       } else {
-        await articleService.update(article.id, payload);
+        const changes = changedFields(article, payload);
+        if (Object.keys(changes).length > 0) {
+          await articleService.update(article.id, changes);
+        }
       }
       onSaved();
     } catch (caught) {

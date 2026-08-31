@@ -32,17 +32,34 @@ Two things in the test setup are worth knowing about:
 
 | Path | Who | What |
 | --- | --- | --- |
-| `/` | everyone | Landing page |
+| `/` | everyone | Landing page and the catalogue |
 | `/login`, `/register` | signed out | Sign in and self-registration |
 | `/account` | signed in | Profile and wallet |
-| `/orders` | signed in | The customer's own orders |
+| `/basket` | customer | Review the basket and buy |
+| `/orders` | customer | The customer's own orders |
 | `/admin/articles` | admin | Add, restock, reprice and remove articles |
 | `/admin/orders` | admin | Every order placed in this shop |
 
-The admin pages are wrapped in `<RequireAuth role="ADMIN">`, and the admin links
-only appear in the navbar for the shop owner. That is a UX guard, not a security
-boundary — the backend enforces the same rule on the token, and the pages call
-endpoints that reject anyone else.
+Pages are wrapped in `<RequireAuth role="…">`, and the navbar only offers what
+the signed-in role can use — a basket for customers, "Manage shop" for the
+owner. That is a UX guard, not a security boundary: the backend enforces the
+same rules on the token, and every page calls endpoints that reject anyone else.
+
+## The basket
+
+The basket lives in the customer's own browser (`localStorage`, behind
+[`basketStorage.ts`](src/lib/basketStorage.ts)) and only reaches the backend at
+checkout. 
+
+- An article that is out of stock cannot be added — the button says so and is
+  disabled.
+- Signing out clears the basket, since that can mean handing the browser to
+  somebody else. An expired token does not: the customer signs back in and their
+  basket is still there.
+
+Checkout posts the article ids to the backend, reports the resulting order in an
+`alert()`, then empties the basket. **Payment in crypto is not wired up yet**, so
+the order comes back `PENDING` and the customer sees it on `/orders`.
 
 ## Configuration
 

@@ -44,3 +44,17 @@ export interface OrderDto {
 export interface OrderQuery extends PageQuery {
   status?: OrderStatus;
 }
+
+/**
+ * One basket line as checkout sends it. Only the article and how many: the
+ * shop takes the name and the price from its own catalogue, so the browser
+ * cannot name its own price.
+ */
+export interface CreateOrderItemDto {
+  articleId: string;
+  quantity: number;
+}
+
+export interface CreateOrderDto {
+  items: CreateOrderItemDto[];
+}

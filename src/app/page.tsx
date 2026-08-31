@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Catalogue from "@/components/Catalogue";
 import { getShopName, getShopTagline } from "@/config/shop";
 
 const FEATURES = [
@@ -54,18 +55,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="catalogue">
-          <h2 className="section-title">Catalogue</h2>
-          <div className="card">
-            <div className="empty-state">
-              <p className="empty-state-title">No articles to show yet</p>
-              <p className="empty-state-text">
-                The catalogue is rendered here once the shop backend serves the
-                article list.
-              </p>
-            </div>
-          </div>
-        </section>
+        <Catalogue />
       </div>
     </>
   );
