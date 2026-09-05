@@ -1,15 +1,27 @@
 import { env } from "next-runtime-env";
 
 /**
- * Base URL of the shop backend. Injected per deployment by the Shop operator.
+ * Base URL of the shop backend, empty meaning "this page's origin".
  *
- * Read through `env()` on every call instead of `process.env.NEXT_PUBLIC_*` at
- * module scope: Next inlines `NEXT_PUBLIC_` reads at build time, and the image
- * is built once for all shops with no env set, so a constant here would ship
- * the localhost fallback and ignore whatever the operator sets at runtime.
+ *
+ *     https://shop1.example  /            → shop frontend
+ *     https://shop1.example  /api/v1/...  → shop backend
+ *
+ * - one image serves every shop, with no per-shop address injected into it
+ * - the requests are same-origin, so no CORS is involved
+ *
+ * This holds only because every request is made from the browser: the fetches
+ * live in effects and event handlers, and `apiRequest` reads the token from
+ * `localStorage`. A relative URL has nothing to resolve against in Node, so a
+ * call made while a page is being server-rendered would throw.
+ *
+ * `NEXT_PUBLIC_API_URL` remains an override for pointing this app at a backend
+ * on another origin. Local development does not need it: the dev server
+ * routes `/api` to the backend itself, see `next.config.ts`.
+ *
  */
 export function getApiBaseUrl(): string {
-  return env("NEXT_PUBLIC_API_URL") ?? "http://localhost:3000";
+  return env("NEXT_PUBLIC_API_URL") ?? "";
 }
 
 export const API_PREFIX = "/api/v1";

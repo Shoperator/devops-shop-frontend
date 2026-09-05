@@ -63,16 +63,26 @@ the order comes back `PENDING` and the customer sees it on `/orders`.
 
 ## Configuration
 
-The shop identity and the backend address are injected per deployment, so the
-same image serves every shop created through ShopHub.
+The shop identity is injected per deployment, so the same image serves every
+shop created through ShopHub.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:3000` | Base URL of the shop backend |
 | `NEXT_PUBLIC_SHOP_NAME` | `Shop` | Name shown in the navbar, hero and page title |
 | `NEXT_PUBLIC_SHOP_TAGLINE` | generic tagline | Subtitle on the landing page |
+| `NEXT_PUBLIC_API_URL` | _same origin_ | Override, for a backend on another origin |
 
 Set these on the running container, not at build time.
+
+### The backend address
+```
+shop1.localhost/              → this app
+shop1.localhost/api/v1/...    → shop backend
+```
+
+`next dev` stands in for the Ingress locally by forwarding `/api` to
+`http://localhost:3000` (`DEV_API_PROXY_TARGET` to point it elsewhere), so
+development takes the same path as a deployed shop.
 
 Next.js substitutes `NEXT_PUBLIC_*` variables into the bundle during
 `next build`. Since a single image serves every shop and the build has no shop
