@@ -24,7 +24,7 @@ function order(overrides: Partial<OrderDto> = {}): OrderDto {
       },
     ],
     total: 25,
-    currency: "USDT",
+    currency: "ETH",
     status: "PENDING",
     walletAddress: null,
     transactionHash: null,
@@ -75,7 +75,7 @@ describe("OrdersPage", () => {
     renderAs(CUSTOMER_USER, <OrdersPage />);
 
     expect(await screen.findByText(/2 × Green tea/)).toBeInTheDocument();
-    expect(screen.getByText("25.00 USDT")).toBeInTheDocument();
+    expect(screen.getByText("25.00 ETH")).toBeInTheDocument();
     expect(screen.getByText("b0000000")).toBeInTheDocument();
   });
 

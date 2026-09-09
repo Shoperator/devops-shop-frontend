@@ -29,7 +29,7 @@ function order(overrides: Partial<OrderDto> = {}): OrderDto {
       },
     ],
     total: 25,
-    currency: "USDT",
+    currency: "ETH",
     status: "PENDING",
     walletAddress: null,
     transactionHash: null,
@@ -80,7 +80,7 @@ describe("AdminOrdersPage", () => {
 
       expect(await screen.findByText("Buyer One (buyer)")).toBeInTheDocument();
       expect(screen.getByText(/2 × Green tea/)).toBeInTheDocument();
-      expect(screen.getByText("25.00 USDT")).toBeInTheDocument();
+      expect(screen.getByText("25.00 ETH")).toBeInTheDocument();
       // Scoped to the table: "PENDING" is also one of the filter options.
       expect(
         within(screen.getByRole("table")).getByText("PENDING"),
@@ -91,7 +91,7 @@ describe("AdminOrdersPage", () => {
       await renderAdminPage();
 
       // The unit price is the snapshot from checkout, not today's price.
-      expect(await screen.findByText(/12\.50 USDT/)).toBeInTheDocument();
+      expect(await screen.findByText(/12\.50 ETH/)).toBeInTheDocument();
     });
 
     it("falls back to the buyer id when the buyer was not joined in", async () => {

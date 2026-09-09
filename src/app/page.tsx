@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: "🔗",
     title: "Pay in crypto",
-    text: "Checkout settles in USDT from your own wallet — the shop never touches your keys.",
+    text: "Checkout settles in ETH from your own wallet — the shop never touches your keys.",
   },
 ];
 

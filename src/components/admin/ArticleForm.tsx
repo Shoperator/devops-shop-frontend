@@ -200,7 +200,7 @@ export default function ArticleForm({
       <div className="form-grid">
         <div className="form-field">
           <label className="form-label" htmlFor="article-price">
-            Price (USDT)
+            Price (ETH)
           </label>
           <input
             id="article-price"

@@ -43,7 +43,12 @@ export const ENDPOINTS = {
     list: `${API_PREFIX}/orders`,
     mine: `${API_PREFIX}/orders/mine`,
     byId: (id: string) => `${API_PREFIX}/orders/${encodeURIComponent(id)}`,
+    /** POST the transaction hash here; the shop checks it against the chain. */
+    payment: (id: string) =>
+      `${API_PREFIX}/orders/${encodeURIComponent(id)}/payment`,
   },
+  /** How to pay this shop: chain and currency. Public, nothing per-customer. */
+  paymentConfig: `${API_PREFIX}/payment-config`,
 } as const;
 
 /** Mirrors MAX_PAGE_SIZE on the backend; a larger `limit` is rejected there. */

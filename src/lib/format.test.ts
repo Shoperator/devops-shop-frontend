@@ -2,8 +2,8 @@ import { formatAmount, formatDateTime, shortId } from "./format";
 
 describe("formatAmount", () => {
   it("always shows two decimals, the way a price is written", () => {
-    expect(formatAmount(12)).toBe("12.00 USDT");
-    expect(formatAmount(12.5)).toBe("12.50 USDT");
+    expect(formatAmount(12)).toBe("12.00 ETH");
+    expect(formatAmount(12.5)).toBe("12.50 ETH");
   });
 
   it("keeps the currency the order was placed in", () => {
@@ -11,7 +11,7 @@ describe("formatAmount", () => {
   });
 
   it("formats zero as a real amount, not as an empty cell", () => {
-    expect(formatAmount(0)).toBe("0.00 USDT");
+    expect(formatAmount(0)).toBe("0.00 ETH");
   });
 });
 

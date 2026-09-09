@@ -61,7 +61,7 @@ describe("Catalogue", () => {
 
       expect(await screen.findByText("Green tea")).toBeInTheDocument();
       expect(screen.getByText("Loose leaf, 100g")).toBeInTheDocument();
-      expect(screen.getByText("12.50 USDT")).toBeInTheDocument();
+      expect(screen.getByText("12.50 ETH")).toBeInTheDocument();
     });
 
     it("says how many pieces are left", async () => {
