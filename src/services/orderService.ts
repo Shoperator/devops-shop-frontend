@@ -2,6 +2,7 @@ import { apiRequest } from "./api";
 import { ENDPOINTS, withQuery } from "./apiConstants";
 import type { CreateOrderDto, OrderDto, OrderQuery } from "./dto/order.dto";
 import type { PageDto, PageQuery } from "./dto/page.dto";
+import type { ConfirmPaymentDto } from "./dto/payment.dto";
 
 /** Orders are commercial data: every call here needs an access token. */
 export const orderService = {
@@ -39,6 +40,21 @@ export const orderService = {
     return apiRequest<OrderDto>(ENDPOINTS.orders.list, {
       method: "POST",
       body: order,
+      authenticated: true,
+    });
+  },
+
+  /**
+   * Settles an order with the transaction the wallet just broadcast.
+   *
+   * Only the hash is sent. The shop reads the amount, the recipient and the
+   * outcome back off the chain itself, so this cannot claim a payment that did
+   * not happen.
+   */
+  confirmPayment(id: string, transactionHash: string): Promise<OrderDto> {
+    return apiRequest<OrderDto>(ENDPOINTS.orders.payment(id), {
+      method: "POST",
+      body: { transactionHash } satisfies ConfirmPaymentDto,
       authenticated: true,
     });
   },

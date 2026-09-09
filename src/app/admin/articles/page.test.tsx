@@ -70,7 +70,7 @@ describe("AdminArticlesPage", () => {
 
       expect(await screen.findByText("Green tea")).toBeInTheDocument();
       expect(screen.getByText("Loose leaf, 100g")).toBeInTheDocument();
-      expect(screen.getByText("12.50 USDT")).toBeInTheDocument();
+      expect(screen.getByText("12.50 ETH")).toBeInTheDocument();
       expect(screen.getByText("8 pcs")).toBeInTheDocument();
     });
 
@@ -107,7 +107,7 @@ describe("AdminArticlesPage", () => {
       await user.click(screen.getByRole("button", { name: "New article" }));
       await user.type(screen.getByLabelText("Name"), "Rooibos");
       await user.type(screen.getByLabelText("Description"), "Caffeine free");
-      await user.type(screen.getByLabelText("Price (USDT)"), "9.99");
+      await user.type(screen.getByLabelText("Price (ETH)"), "9.99");
       await user.type(screen.getByLabelText("Pieces in stock"), "12");
       await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -132,7 +132,7 @@ describe("AdminArticlesPage", () => {
 
       await user.click(screen.getByRole("button", { name: "New article" }));
       await user.type(screen.getByLabelText("Name"), "Rooibos");
-      await user.type(screen.getByLabelText("Price (USDT)"), "9.99");
+      await user.type(screen.getByLabelText("Price (ETH)"), "9.99");
       await user.type(screen.getByLabelText("Pieces in stock"), "12");
       await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -166,7 +166,7 @@ describe("AdminArticlesPage", () => {
 
         await user.click(screen.getByRole("button", { name: "New article" }));
         await user.type(screen.getByLabelText("Name"), "Rooibos");
-        await user.type(screen.getByLabelText("Price (USDT)"), price);
+        await user.type(screen.getByLabelText("Price (ETH)"), price);
         await user.type(screen.getByLabelText("Pieces in stock"), "1");
         await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -184,7 +184,7 @@ describe("AdminArticlesPage", () => {
 
       await user.click(screen.getByRole("button", { name: "New article" }));
       await user.type(screen.getByLabelText("Name"), "Too precise");
-      await user.type(screen.getByLabelText("Price (USDT)"), "1.005");
+      await user.type(screen.getByLabelText("Price (ETH)"), "1.005");
       await user.type(screen.getByLabelText("Pieces in stock"), "1");
       await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -200,7 +200,7 @@ describe("AdminArticlesPage", () => {
 
       await user.click(screen.getByRole("button", { name: "New article" }));
       await user.type(screen.getByLabelText("Name"), "Half a mug");
-      await user.type(screen.getByLabelText("Price (USDT)"), "1.00");
+      await user.type(screen.getByLabelText("Price (ETH)"), "1.00");
       await user.type(screen.getByLabelText("Pieces in stock"), "1.5");
       await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -217,7 +217,7 @@ describe("AdminArticlesPage", () => {
 
       await user.click(screen.getByRole("button", { name: "New article" }));
       await user.type(screen.getByLabelText("Name"), "Rooibos");
-      await user.type(screen.getByLabelText("Price (USDT)"), "9.99");
+      await user.type(screen.getByLabelText("Price (ETH)"), "9.99");
       await user.type(screen.getByLabelText("Pieces in stock"), "12");
       await user.click(screen.getByRole("button", { name: "Add article" }));
 
@@ -236,7 +236,7 @@ describe("AdminArticlesPage", () => {
       await user.click(await screen.findByRole("button", { name: "Edit" }));
 
       expect(screen.getByLabelText("Name")).toHaveValue("Green tea");
-      expect(screen.getByLabelText("Price (USDT)")).toHaveValue(12.5);
+      expect(screen.getByLabelText("Price (ETH)")).toHaveValue(12.5);
       expect(screen.getByLabelText("Pieces in stock")).toHaveValue(8);
     });
 
@@ -286,8 +286,8 @@ describe("AdminArticlesPage", () => {
         const user = userEvent.setup();
         await openEditor(user);
 
-        await user.clear(screen.getByLabelText("Price (USDT)"));
-        await user.type(screen.getByLabelText("Price (USDT)"), "19.99");
+        await user.clear(screen.getByLabelText("Price (ETH)"));
+        await user.type(screen.getByLabelText("Price (ETH)"), "19.99");
         await user.click(screen.getByRole("button", { name: "Save" }));
 
         await waitFor(() =>
@@ -348,8 +348,8 @@ describe("AdminArticlesPage", () => {
         await openEditor(user);
 
         // The article costs 12.5; "12.50" is the same money.
-        await user.clear(screen.getByLabelText("Price (USDT)"));
-        await user.type(screen.getByLabelText("Price (USDT)"), "12.50");
+        await user.clear(screen.getByLabelText("Price (ETH)"));
+        await user.type(screen.getByLabelText("Price (ETH)"), "12.50");
         await user.click(screen.getByRole("button", { name: "Save" }));
 
         await waitFor(() =>
@@ -364,7 +364,7 @@ describe("AdminArticlesPage", () => {
 
         await user.click(screen.getByRole("button", { name: "New article" }));
         await user.type(screen.getByLabelText("Name"), "Rooibos");
-        await user.type(screen.getByLabelText("Price (USDT)"), "9.99");
+        await user.type(screen.getByLabelText("Price (ETH)"), "9.99");
         await user.type(screen.getByLabelText("Pieces in stock"), "12");
         await user.click(screen.getByRole("button", { name: "Add article" }));
 

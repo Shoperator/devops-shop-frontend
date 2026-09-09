@@ -15,8 +15,13 @@ const amountFormat = new Intl.NumberFormat(LOCALE, {
   maximumFractionDigits: 2,
 });
 
-/** `12.50 USDT` — the currency comes from the order, not from a locale table. */
-export function formatAmount(value: number, currency = "USDT"): string {
+/**
+ * `12.50 ETH` — the currency comes from the order, not from a locale table.
+ *
+ * The default covers the catalogue and the basket, which price articles before
+ * any order exists to carry a currency.
+ */
+export function formatAmount(value: number, currency = "ETH"): string {
   return `${amountFormat.format(value)} ${currency}`;
 }
 

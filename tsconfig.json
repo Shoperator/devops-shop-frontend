@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    // ES2020 for BigInt, which the payment amount is computed in: an order
+    // total in wei runs past what a double can hold exactly.
+    "target": "ES2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
