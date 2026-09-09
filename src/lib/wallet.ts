@@ -54,12 +54,26 @@ function provider(): EthereumProvider {
 /**
  * Whether a wallet is installed at all.
  *
- * Read in an effect rather than during render: the extension injects
- * `window.ethereum` into the page, so it does not exist while Next is rendering
- * on the server and the two passes would disagree.
+ * The extension injects `window.ethereum` into the page, so this is an external
+ * store rather than something render can read: on the server there is no
+ * wallet, and React swaps in the real answer after hydration.
  */
 export function isWalletAvailable(): boolean {
   return typeof window !== "undefined" && window.ethereum !== undefined;
+}
+
+/** What the server renders: no wallet, because there is no page yet. */
+export function isWalletAvailableOnServer(): boolean {
+  return false;
+}
+
+/**
+ * The extension injects itself before the page is interactive and never takes
+ * itself away again, so there is no change to listen for — the subscription
+ * exists only because `useSyncExternalStore` asks for one.
+ */
+export function subscribeToWallet(): () => void {
+  return () => {};
 }
 
 function errorCode(error: unknown): number | null {

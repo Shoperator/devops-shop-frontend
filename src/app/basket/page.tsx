@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import RequireAuth from "@/components/RequireAuth";
 import { useBasket } from "@/context/BasketContext";
 import { formatAmount, shortId } from "@/lib/format";
@@ -9,7 +9,9 @@ import {
   connect,
   ensureChain,
   isWalletAvailable,
+  isWalletAvailableOnServer,
   sendPayment,
+  subscribeToWallet,
   WalletError,
 } from "@/lib/wallet";
 import { ApiError } from "@/services/api";
@@ -41,7 +43,13 @@ function Basket() {
   const [phase, setPhase] = useState<Phase>("basket");
   const [order, setOrder] = useState<OrderDto | null>(null);
   const [config, setConfig] = useState<PaymentConfigDto | null>(null);
-  const [hasWallet, setHasWallet] = useState(false);
+  // The wallet extension is an external store: it injects `window.ethereum`
+  // into the page, so it cannot be read while this renders on the server.
+  const hasWallet = useSyncExternalStore(
+    subscribeToWallet,
+    isWalletAvailable,
+    isWalletAvailableOnServer,
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /**
@@ -50,13 +58,6 @@ function Basket() {
    * transaction instead of sending — and paying for — another one.
    */
   const [sentHash, setSentHash] = useState<string | null>(null);
-
-  // The extension injects `window.ethereum` into the page, so it cannot be read
-  // while this renders on the server; doing it in an effect keeps the two
-  // passes agreeing.
-  useEffect(() => {
-    setHasWallet(isWalletAvailable());
-  }, []);
 
   useEffect(() => {
     // A shop that cannot say how it takes payment still shows its basket; the
